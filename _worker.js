@@ -1,46 +1,36 @@
-// Cloudflare Pages / Workers — LLWIN landing page (llvip.info)
 import DOMAIN_MAPPINGS from "./domains.json";
 
-const DEFAULT_REDIRECT = "https://14llwin.com/?id=927599905";
+function pickUrl(entry) {
+  if (!entry) return null;
+  if (typeof entry === "string") return entry;
+  return entry.main_url || entry.target_url || entry.url || null;
+}
 
 function resolveTargetUrl(cleanHost) {
-  if (DOMAIN_MAPPINGS && DOMAIN_MAPPINGS[cleanHost]) {
-    const entry = DOMAIN_MAPPINGS[cleanHost];
-    if (typeof entry === "string") return entry;
-    if (entry && entry.main_url) return entry.main_url;
-    if (entry && entry.target_url) return entry.target_url;
-  }
-  return DEFAULT_REDIRECT;
+  const map = DOMAIN_MAPPINGS || {};
+  return pickUrl(map[cleanHost]) || pickUrl(map._default) || "#";
 }
 
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     const path = url.pathname;
-
     const rawHost = request.headers.get("host") || url.hostname || "";
     const cleanHost = rawHost.replace(/^www\./i, "").split(":")[0].toLowerCase();
     const targetUrl = resolveTargetUrl(cleanHost);
 
     if (path === "/api/domain-config") {
-      return new Response(
-        JSON.stringify({
-          success: true,
-          host: cleanHost,
-          targetUrl: targetUrl
-        }),
-        {
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8",
-            "Access-Control-Allow-Origin": "*"
-          }
+      return new Response(JSON.stringify({ success: true, host: cleanHost, targetUrl }), {
+        headers: {
+          "Content-Type": "application/json;charset=UTF-8",
+          "Access-Control-Allow-Origin": "*"
         }
-      );
+      });
     }
 
     if (path === "/config.js") {
       const configJs =
-        `/* Dynamically generated for host: ${cleanHost} */\n` +
+        `/* ${cleanHost} */\n` +
         `window.REDIRECT_URL = ${JSON.stringify(targetUrl)};\n`;
       return new Response(configJs, {
         headers: {

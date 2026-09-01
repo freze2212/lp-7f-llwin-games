@@ -1,64 +1,35 @@
-/* Config link theo domain.
- * Key: hostname không có www (www.llvip.info → llvip.info).
- * Thêm domain mới: bổ sung 1 dòng trong domains.json (ưu tiên) hoặc linksByDomain.
- */
+/* Chỉ sửa domains.json khi thêm domain. File này chỉ đọc JSON rồi gắn REDIRECT_URL. */
 (function () {
-  var DEFAULT_REDIRECT_URL = "https://14llwin.com/?id=927599905";
-
-  window.SITE_CONFIG = {
-    defaultLink: DEFAULT_REDIRECT_URL,
-    linksByDomain: {
-      "lltong86.com": "https://22llwin.com/?id=373982317",
-      "llvip88.com": DEFAULT_REDIRECT_URL,
-      "llwin85.com": "https://www.07llwin.com/?id=584043108",
-      "llwin00.com": "https://www.09llwin.com/?id=174171871"
-    }
-  };
-
-  window.REDIRECT_URL = window.REDIRECT_URL || DEFAULT_REDIRECT_URL;
-
-  function getCleanHost() {
-    return (window.location.hostname || "").replace(/^www\./i, "").toLowerCase();
+  function host() {
+    return (location.hostname || "").replace(/^www\./i, "").toLowerCase();
   }
 
-  function pickUrl(entry) {
+  function pick(entry) {
     if (!entry) return null;
     if (typeof entry === "string") return entry;
     return entry.main_url || entry.target_url || entry.url || null;
   }
 
-  function applyDomainConfig(domainData) {
-    var cleanHost = getCleanHost();
-    var fromJson = pickUrl(domainData && domainData[cleanHost]);
-    var fromInline = pickUrl(window.SITE_CONFIG.linksByDomain[cleanHost]);
-    window.REDIRECT_URL = fromJson || fromInline || window.SITE_CONFIG.defaultLink;
-
+  function apply(data) {
+    data = data || {};
+    var url = pick(data[host()]) || pick(data._default) || window.REDIRECT_URL || "#";
     try {
-      var params = new URLSearchParams(window.location.search);
-      if (params.has("target")) {
-        window.REDIRECT_URL = params.get("target");
-      }
+      var q = new URLSearchParams(location.search);
+      if (q.has("target")) url = q.get("target");
     } catch (e) {}
-
+    window.REDIRECT_URL = url;
     window.dispatchEvent(
-      new CustomEvent("domainConfigLoaded", {
-        detail: { url: window.REDIRECT_URL, host: cleanHost }
-      })
+      new CustomEvent("domainConfigLoaded", { detail: { url: url, host: host() } })
     );
   }
 
-  var host = getCleanHost();
-  var inline = pickUrl(window.SITE_CONFIG.linksByDomain[host]);
-  if (inline) window.REDIRECT_URL = inline;
+  if (window.REDIRECT_URL) {
+    apply({ _default: window.REDIRECT_URL });
+    return;
+  }
 
   fetch("domains.json")
-    .then(function (res) {
-      return res.json();
-    })
-    .then(function (data) {
-      applyDomainConfig(data);
-    })
-    .catch(function () {
-      applyDomainConfig(null);
-    });
+    .then(function (r) { return r.json(); })
+    .then(apply)
+    .catch(function () { apply(null); });
 })();

@@ -1,14 +1,8 @@
 {
-  "lltong86.com": {
-    "main_url": "https://22llwin.com/?id=373982317"
-  },
-  "llvip88.com": {
-    "main_url": "https://14llwin.com/?id=927599905"
-  },
-  "llwin85.com": {
-    "main_url": "https://www.07llwin.com/?id=584043108"
-  },
-  "llwin00.com": {
-    "main_url": "https://www.09llwin.com/?id=174171871"
-  }
+  "_default": "https://14llwin.com/?id=927599905",
+  "lltong86.com": "https://22llwin.com/?id=373982317",
+  "llvip88.com": "https://14llwin.com/?id=927599905",
+  "llwin85.com": "https://www.07llwin.com/?id=584043108",
+  "llwin00.com": "https://www.09llwin.com/?id=174171871",
+  "llwinkjc.top": "https://14llwin.com/?id=132611701"
 }
