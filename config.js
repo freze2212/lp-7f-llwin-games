@@ -10,7 +10,8 @@
     linksByDomain: {
       "lltong86.com": "https://22llwin.com/?id=373982317",
       "llvip88.com": DEFAULT_REDIRECT_URL,
-      "llwin85.com": "https://www.07llwin.com/?id=584043108"
+      "llwin85.com": "https://www.07llwin.com/?id=584043108",
+      "llwin00.com": "https://www.09llwin.com/?id=174171871"
     }
   };
 
