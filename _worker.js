@@ -8,7 +8,14 @@ function pickUrl(entry) {
 
 function resolveTargetUrl(cleanHost) {
   const map = DOMAIN_MAPPINGS || {};
-  return pickUrl(map[cleanHost]) || pickUrl(map._default) || "#";
+  if (map[cleanHost]) return pickUrl(map[cleanHost]);
+  const targetHost = (cleanHost || "").toLowerCase();
+  for (const [key, val] of Object.entries(map)) {
+    if (key.replace(/^www\./i, "").toLowerCase() === targetHost) {
+      return pickUrl(val);
+    }
+  }
+  return pickUrl(map._default) || "#";
 }
 
 export default {

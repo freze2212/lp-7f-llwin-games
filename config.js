@@ -10,16 +10,32 @@
     return entry.main_url || entry.target_url || entry.url || null;
   }
 
+  function findEntry(data, currentHost) {
+    if (!data) return null;
+    if (data[currentHost]) return data[currentHost];
+    var target = currentHost.toLowerCase();
+    for (var key in data) {
+      if (Object.prototype.hasOwnProperty.call(data, key)) {
+        if (key.replace(/^www\./i, "").toLowerCase() === target) {
+          return data[key];
+        }
+      }
+    }
+    return null;
+  }
+
   function apply(data) {
     data = data || {};
-    var url = pick(data[host()]) || pick(data._default) || window.REDIRECT_URL || "#";
+    var currentHost = host();
+    var entry = findEntry(data, currentHost);
+    var url = pick(entry) || pick(data._default) || window.REDIRECT_URL || "#";
     try {
       var q = new URLSearchParams(location.search);
       if (q.has("target")) url = q.get("target");
     } catch (e) {}
     window.REDIRECT_URL = url;
     window.dispatchEvent(
-      new CustomEvent("domainConfigLoaded", { detail: { url: url, host: host() } })
+      new CustomEvent("domainConfigLoaded", { detail: { url: url, host: currentHost } })
     );
   }
 
