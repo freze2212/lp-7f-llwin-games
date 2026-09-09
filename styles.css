@@ -14,8 +14,13 @@ body {
 /* === VIDEO BACKGROUND === */
 .video-bg {
     position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: 100vw;
+    height: 100vh;
+    transform: translate(-50%, -50%);
     object-fit: cover;
     z-index: 0;
 }
@@ -48,12 +53,12 @@ body {
 }
 
 .logo {
-    width: 450px;
-    max-width: 95%;
+    width: 380px;
+    max-width: 90%;
     height: auto;
     display: block;
     margin: 0 auto;
-    filter: drop-shadow(0 0 20px rgba(255,215,0,0.5));
+    filter: drop-shadow(0 0 25px rgba(0, 180, 255, 0.6));
 }
 
 /* === MARQUEE TEXT === */
