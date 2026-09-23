@@ -62,7 +62,8 @@
         var normH = h.replace(/^www\./, '');
         var entry = dj[h] || dj[normH] || dj['www.' + normH];
         if (entry) {
-          var target = entry.main_url || entry.url || entry.link || (typeof entry === 'string' ? entry : '');
+          var target = (typeof entry === 'string') ? entry : (entry.main_url || entry.url || entry.messenger_url || entry.target_url || '');
+          if (typeof target !== 'string' || !/^https?:\/\//i.test(target)) return;
           if (target) {
             window.REDIRECT_URL = target;
             if (window.SITE_CONFIG) {

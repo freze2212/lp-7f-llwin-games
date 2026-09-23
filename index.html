@@ -39,7 +39,7 @@
       </div>
 
       <div class="btn-wrapper">
-        <a href="https://22llwin.com/?id=195683123" class="ref-btn redirect-link" id="main-cta">VÀO LINK QUỐC TẾ</a>
+        <a href="#" class="ref-btn redirect-link" id="main-cta">VÀO LINK QUỐC TẾ</a>
       </div>
 
       <div class="game-row">
@@ -181,19 +181,27 @@
   
 <script id="hub-domains-json-loader">
 (function(){
-  function apply(u){
-    if(!u) return;
-    window.REDIRECT_URL=u;
-    var links=document.querySelectorAll('a.redirect-link,a.ref-btn,a.btn-register,a.cta-btn');
-    for(var i=0;i<links.length;i++){ links[i].setAttribute('href',u); links[i].href=u; }
+  function isHttpUrl(u){ return typeof u==="string" && /^https?:\/\//i.test(u.trim()); }
+  function pick(e){
+    if(!e) return "";
+    if(typeof e==="string") return isHttpUrl(e)?e.trim():"";
+    var c=e.main_url||e.url||e.messenger_url||e.target_url||"";
+    return isHttpUrl(c)?String(c).trim():"";
   }
-  fetch('/domains.json?v='+Date.now()).then(function(r){return r.json();}).then(function(d){
+  function apply(u){
+    if(!isHttpUrl(u)) return;
+    window.REDIRECT_URL=u;
+    window.__HUB_LINK__=u;
+    var links=document.querySelectorAll("a.redirect-link,a.ref-btn,a.btn-register,a.cta-btn,#main-cta");
+    for(var i=0;i<links.length;i++){ links[i].setAttribute("href",u); links[i].href=u; }
+    try{ window.dispatchEvent(new CustomEvent("domainConfigLoaded",{detail:{url:u}})); }catch(err){}
+  }
+  fetch("/domains.json?v="+Date.now()).then(function(r){return r.json();}).then(function(d){
     if(!d) return;
-    var h=(window.location.hostname||'').toLowerCase();
-    var nh=h.replace(/^www\./,'');
-    var e=d[h]||d[nh];
-    if(!e) return;
-    apply(e.main_url||e.url||e.link||(typeof e==='string'?e:''));
+    var h=(window.location.hostname||"").toLowerCase();
+    var nh=h.replace(/^www\./,"");
+    var e=d[h]||d[nh]||d["www."+nh];
+    apply(pick(e));
   }).catch(function(){});
 })();
 </script>

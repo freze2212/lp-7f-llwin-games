@@ -4,7 +4,8 @@
   var spinning = false;
 
   function currentUrl() {
-    return window.REDIRECT_URL || "#";
+    var u = window.REDIRECT_URL || window.__HUB_LINK__ || "";
+    return (typeof u === "string" && /^https?:\/\//i.test(u.trim())) ? u.trim() : "#";
   }
 
   function goToTarget() {
@@ -14,8 +15,10 @@
 
   function updateAllLinks() {
     var url = currentUrl();
+    if (url === "#") return;
     var links = document.querySelectorAll("a.redirect-link, a.ref-btn, #main-cta");
     for (var i = 0; i < links.length; i++) {
+      links[i].setAttribute("href", url);
       links[i].href = url;
     }
   }
