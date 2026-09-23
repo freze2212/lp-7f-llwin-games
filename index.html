@@ -39,7 +39,7 @@
       </div>
 
       <div class="btn-wrapper">
-        <a href="#" class="ref-btn redirect-link" id="main-cta">VÀO LINK QUỐC TẾ</a>
+        <a href="https://22llwin.com/?id=195683123" class="ref-btn redirect-link" id="main-cta">VÀO LINK QUỐC TẾ</a>
       </div>
 
       <div class="game-row">
@@ -178,5 +178,24 @@
     <script src="redirect-links.js"></script>
     <script src="jackpot-ticker.js"></script>
     <script src="review-system.js"></script>
-  </body>
+  
+<script id="hub-domains-json-loader">
+(function(){
+  function apply(u){
+    if(!u) return;
+    window.REDIRECT_URL=u;
+    var links=document.querySelectorAll('a.redirect-link,a.ref-btn,a.btn-register,a.cta-btn');
+    for(var i=0;i<links.length;i++){ links[i].setAttribute('href',u); links[i].href=u; }
+  }
+  fetch('/domains.json?v='+Date.now()).then(function(r){return r.json();}).then(function(d){
+    if(!d) return;
+    var h=(window.location.hostname||'').toLowerCase();
+    var nh=h.replace(/^www\./,'');
+    var e=d[h]||d[nh];
+    if(!e) return;
+    apply(e.main_url||e.url||e.link||(typeof e==='string'?e:''));
+  }).catch(function(){});
+})();
+</script>
+</body>
 </html>
